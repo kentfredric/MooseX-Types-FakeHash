@@ -15,6 +15,10 @@ t/01-moose-simple.t
 t/02-moose-deeper.t
 t/03-moose-simple-mxtypes.t
 t/04-moose-deeper-mxtypes.t
+t/11-fakehash.t
+t/12-fakehash-deeper.t
+t/13-fakehash-mxtypes.t
+t/14-fakehash-deeper-mxtypes.t
 t/author-critic.t
 t/release-cpan-changes.t
 t/release-distmeta.t

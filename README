@@ -76,11 +76,33 @@ TYPES
     The keys is required to be of type "Str", while the value is the
     parameterized type.
 
-      KeyWith[ Foo ]
+      has bar ( isa => KeyWith[ Foo ] , ... );
 
       ...
 
-      [ "Key" => $fooitem ] # [ Str, Foo ]
+      ->new(
+        bar => [ "Key" => $fooitem ] # [ Str, Foo ]
+      );
+
+  FakeHash
+  FakeHash[ X ]
+    A parameterizable type intended to simulate the values of a HashRef, but
+    stored in an ArrayRef instead as an even number of key/values.
+
+    The keys are required to be of type "Str", while the value is the
+    parameterized type.
+
+      has bar ( isa => FakeHash[ Foo ] , ... );
+
+      ...
+
+      ->new(
+        bar => [
+          "Key"           => $fooitem,
+          "AnotherKey"    => $baritem,
+          "YetAnotherKey" => $quuxitem,
+        ] # [ Str, Foo, Str, Foo, Str, Foo ]
+      );
 
 AUTHOR
     Kent Fredric <kentnl@cpan.org>
