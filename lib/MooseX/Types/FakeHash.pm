@@ -22,7 +22,7 @@ sub _FakeHash { return ref( $_[0] ) eq 'ARRAY' && !( scalar @{ $_[0] } & 1 ) }
 sub _OrderedFakeHash { return ref( $_[0] ) eq 'ARRAY' }
 
 sub _setup {
-
+  ## no critic ( ProtectPrivateVars )
   my $keyWith = Moose::Meta::TypeConstraint::Parameterizable->new(
     name               => 'KeyWith',
     package_defined_in => __PACKAGE__,
