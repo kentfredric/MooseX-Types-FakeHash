@@ -15,7 +15,7 @@ use Moose::Meta::TypeConstraint::Parameterized;
 
 
 
-## no critic ( RequireArgUnpacking )
+## no critic ( RequireArgUnpacking Capitalization )
 
 sub _KeyWith  { return ref( $_[0] ) eq 'ARRAY' && scalar @{ $_[0] } == 2 }
 sub _FakeHash { return ref( $_[0] ) eq 'ARRAY' && !( scalar @{ $_[0] } & 1 ) }
@@ -53,7 +53,7 @@ my $FakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
   parent             => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
   constraint         => sub {
     return unless ref($_) eq 'ARRAY';    # its an array
-    return unless !( scalar @{$_} & 1 ); # and it has a multiple of 2 keys ( bitwise checks for even, 0 == true )
+    return if scalar @{$_} & 1; # and it has a multiple of 2 keys ( bitwise checks for even, 0 == true )
     return 1;
   },
   optimized_constraint => \&MooseX::Types::FakeHash::_FakeHash,
