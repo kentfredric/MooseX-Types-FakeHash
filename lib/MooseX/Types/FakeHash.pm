@@ -15,9 +15,11 @@ use Moose::Meta::TypeConstraint::Parameterized;
 
 
 
-sub x_KeyWith  { ref( $_[0] ) eq 'ARRAY' && scalar @{ $_[0] } == 2 }
-sub x_FakeHash { ref( $_[0] ) eq 'ARRAY' && !( scalar @{ $_[0] } & 1 ) }
-sub x_OrderedFakeHash { ref( $_[0] ) eq 'ARRAY' }
+## no critic ( RequireArgUnpacking )
+
+sub _KeyWith  { return ref( $_[0] ) eq 'ARRAY' && scalar @{ $_[0] } == 2 }
+sub _FakeHash { return ref( $_[0] ) eq 'ARRAY' && !( scalar @{ $_[0] } & 1 ) }
+sub _OrderedFakeHash { return ref( $_[0] ) eq 'ARRAY' }
 
 my $KeyWith = Moose::Meta::TypeConstraint::Parameterizable->new(
   name               => 'KeyWith',
@@ -28,7 +30,7 @@ my $KeyWith = Moose::Meta::TypeConstraint::Parameterizable->new(
     return unless @{$_} == 2;            # and it has exactly 2 keys.
     return 1;
   },
-  optimized_constraint => \&MooseX::Types::FakeHash::x_KeyWith,
+  optimized_constraint => \&MooseX::Types::FakeHash::_KeyWith,
   constraint_generator => sub {
     my $type_parameter = shift;
     my $check          = $type_parameter->_compiled_type_constraint;
@@ -54,7 +56,7 @@ my $FakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
     return unless !( scalar @{$_} & 1 ); # and it has a multiple of 2 keys ( bitwise checks for even, 0 == true )
     return 1;
   },
-  optimized_constraint => \&MooseX::Types::FakeHash::x_FakeHash,
+  optimized_constraint => \&MooseX::Types::FakeHash::_FakeHash,
   constraint_generator => sub {
     my $type_parameter = shift;
     my $check          = $type_parameter->_compiled_type_constraint;
@@ -87,7 +89,7 @@ my $OrderedFakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
     return unless ref($_) eq 'ARRAY';    # its an array
     return 1;
   },
-  optimized_constraint => \&MooseX::Types::FakeHash::x_OrderedFakeHash,
+  optimized_constraint => \&MooseX::Types::FakeHash::_OrderedFakeHash,
   constraint_generator => sub {
     my $type_parameter = shift;
     my $subtype        = Moose::Meta::TypeConstraint::Parameterized->new(
@@ -110,6 +112,8 @@ Moose::Util::TypeConstraints::add_parameterizable_type($OrderedFakeHash);
 sub type_storage {
   return { map { ($_) x 2 } qw( KeyWith FakeHash OrderedFakeHash ) };
 }
+
+no Moose::Util::TypeConstraints;
 
 1;
 
