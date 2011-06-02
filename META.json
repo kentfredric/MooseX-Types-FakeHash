@@ -38,6 +38,7 @@
       "runtime" : {
          "requires" : {
             "Moose::Meta::TypeConstraint::Parameterizable" : 0,
+            "Moose::Meta::TypeConstraint::Parameterized" : 0,
             "Moose::Util::TypeConstraints" : 0,
             "MooseX::Types" : 0
          }
@@ -78,6 +79,7 @@
          "Module::Build" : "0.38",
          "Moose" : "2.0007",
          "Moose::Meta::TypeConstraint::Parameterizable" : "2.0007",
+         "Moose::Meta::TypeConstraint::Parameterized" : "2.0007",
          "Moose::Util::TypeConstraints" : "2.0007",
          "MooseX::Types" : "0.25",
          "MooseX::Types::Moose" : "0.25",

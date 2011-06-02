@@ -31,6 +31,7 @@ my %module_build_args = (
   'recursive_test_files' => 1,
   'requires' => {
     'Moose::Meta::TypeConstraint::Parameterizable' => '0',
+    'Moose::Meta::TypeConstraint::Parameterized' => '0',
     'Moose::Util::TypeConstraints' => '0',
     'MooseX::Types' => '0'
   },

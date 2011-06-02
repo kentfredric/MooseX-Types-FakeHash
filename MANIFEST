@@ -19,6 +19,10 @@ t/11-fakehash.t
 t/12-fakehash-deeper.t
 t/13-fakehash-mxtypes.t
 t/14-fakehash-deeper-mxtypes.t
+t/21-orderedfakehash.t
+t/22-orderedfakehash-deeper.t
+t/23-orderedfakehash-mxtypes.t
+t/24-orderedfakehash-deeper-mxtypes.t
 t/author-critic.t
 t/release-cpan-changes.t
 t/release-distmeta.t
