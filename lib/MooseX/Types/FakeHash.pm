@@ -8,6 +8,7 @@ package MooseX::Types::FakeHash;
 use MooseX::Types;
 use Moose::Util::TypeConstraints ();
 use Moose::Meta::TypeConstraint::Parameterizable;
+use Moose::Meta::TypeConstraint::Parameterized;
 
 =head1 SYNOPSIS
 
@@ -102,6 +103,7 @@ The keys is required to be of type C<Str>, while the value is the parameterized 
 
 sub x_KeyWith  { ref( $_[0] ) eq 'ARRAY' && scalar @{ $_[0] } == 2 }
 sub x_FakeHash { ref( $_[0] ) eq 'ARRAY' && !( scalar @{ $_[0] } & 1 ) }
+sub x_OrderedFakeHash { ref( $_[0] ) eq 'ARRAY' }
 
 my $KeyWith = Moose::Meta::TypeConstraint::Parameterizable->new(
   name               => 'KeyWith',
@@ -124,6 +126,9 @@ my $KeyWith = Moose::Meta::TypeConstraint::Parameterizable->new(
     };
   },
 );
+
+Moose::Util::TypeConstraints::register_type_constraint($KeyWith);
+Moose::Util::TypeConstraints::add_parameterizable_type($KeyWith);
 
 =head2 FakeHash
 
@@ -148,7 +153,6 @@ The keys are required to be of type C<Str>, while the value is the parameterized
 
 =cut
 
-
 my $FakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
   name               => 'FakeHash',
   package_defined_in => __PACKAGE__,
@@ -165,7 +169,7 @@ my $FakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
     my $keycheck       = Moose::Util::TypeConstraints::find_type_constraint('Str')->_compiled_type_constraint;
     return sub {
       my @items = @{$_};
-      my $i = 0;
+      my $i     = 0;
       while ( $i <= $#items ) {
         $keycheck->( $items[$i] ) || return;
         $check->( $items[ $i + 1 ] ) || return;
@@ -179,11 +183,78 @@ my $FakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
   },
 );
 
-Moose::Util::TypeConstraints::register_type_constraint($_) for $KeyWith, $FakeHash;
-Moose::Util::TypeConstraints::add_parameterizable_type($_) for $KeyWith, $FakeHash;
+Moose::Util::TypeConstraints::register_type_constraint($FakeHash);
+Moose::Util::TypeConstraints::add_parameterizable_type($FakeHash);
+
+=head2 OrderedFakeHash
+
+=head2 OrderedFakeHash[ X ]
+
+A parameterizable type intended to simulate the values of a HashRef, but stored in an ArrayRef instead
+as an array of L</KeyWith> items. This is much like a L</FakeHash>, but slightly different, in that the paring of the Key/Value is stricter,
+and numerical-offset based lookup is simpler.
+
+  [
+     [ "Key" => $value ],
+     [ "Key" => $value ],
+  ]
+
+In essence, OrderedFakeHash[ x ] is ShortHand for ArrayRef[ KeyWith[ x ] ].
+
+This makes it harder to convert to a native Perl 5 Hash, but somewhat easier to iterate pairwise.
+
+  my $data = $object->orderedfakehashthing();
+  for my $pair ( @($data) ){
+    my ( $key, $value ) = @{ $pair };
+    ....
+  }
+
+The keys are required to be of type C<Str>, while the value is the parameterized type.
+
+  has bar ( isa => OrderedFakeHash[ Foo ] , ... );
+
+  ...
+
+  ->new(
+    bar => [
+      [ "Key"           => $fooitem  ],
+      [ "AnotherKey"    => $baritem  ],
+      [ "YetAnotherKey" => $quuxitem ],
+    ] # [ [ Str, Foo ],[ Str, Foo ],[ Str, Foo ] ]
+  );
+
+=cut
+
+my $OrderedFakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
+  name               => 'OrderedFakeHash',
+  package_defined_in => __PACKAGE__,
+  parent             => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
+  constraint         => sub {
+    return unless ref($_) eq 'ARRAY';    # its an array
+    return 1;
+  },
+  optimized_constraint => \&MooseX::Types::FakeHash::x_OrderedFakeHash,
+  constraint_generator => sub {
+    my $type_parameter = shift;
+    my $subtype        = Moose::Meta::TypeConstraint::Parameterized->new(
+      name           => 'OrderedFakeHash::KeyWith[' . $type_parameter->name . ']',
+      parent         => $KeyWith,
+      type_parameter => $type_parameter,
+    );
+    return sub {
+      for my $pair ( @{$_} ) {
+        $subtype->assert_valid($pair) || return;
+      }
+      1;
+    };
+  },
+);
+
+Moose::Util::TypeConstraints::register_type_constraint($OrderedFakeHash);
+Moose::Util::TypeConstraints::add_parameterizable_type($OrderedFakeHash);
 
 sub type_storage {
-  return { map { ( $_ ) x 2 } qw( KeyWith FakeHash ) };
+  return { map { ($_) x 2 } qw( KeyWith FakeHash OrderedFakeHash ) };
 }
 
 1;
