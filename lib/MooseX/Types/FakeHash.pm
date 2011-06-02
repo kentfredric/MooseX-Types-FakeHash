@@ -22,7 +22,8 @@ sub _FakeHash { return ref( $_[0] ) eq 'ARRAY' && !( scalar @{ $_[0] } & 1 ) }
 sub _OrderedFakeHash { return ref( $_[0] ) eq 'ARRAY' }
 
 sub _setup {
-  my $KeyWith = Moose::Meta::TypeConstraint::Parameterizable->new(
+
+  my $keyWith = Moose::Meta::TypeConstraint::Parameterizable->new(
     name               => 'KeyWith',
     package_defined_in => __PACKAGE__,
     parent             => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
@@ -44,11 +45,11 @@ sub _setup {
     },
   );
 
-  Moose::Util::TypeConstraints::register_type_constraint($KeyWith);
-  Moose::Util::TypeConstraints::add_parameterizable_type($KeyWith);
+  Moose::Util::TypeConstraints::register_type_constraint($keyWith);
+  Moose::Util::TypeConstraints::add_parameterizable_type($keyWith);
 
 
-  my $FakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
+  my $fakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
     name               => 'FakeHash',
     package_defined_in => __PACKAGE__,
     parent             => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
@@ -78,11 +79,11 @@ sub _setup {
     },
   );
 
-  Moose::Util::TypeConstraints::register_type_constraint($FakeHash);
-  Moose::Util::TypeConstraints::add_parameterizable_type($FakeHash);
+  Moose::Util::TypeConstraints::register_type_constraint($fakeHash);
+  Moose::Util::TypeConstraints::add_parameterizable_type($fakeHash);
 
 
-  my $OrderedFakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
+  my $orderedFakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
     name               => 'OrderedFakeHash',
     package_defined_in => __PACKAGE__,
     parent             => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
@@ -95,7 +96,7 @@ sub _setup {
       my $type_parameter = shift;
       my $subtype        = Moose::Meta::TypeConstraint::Parameterized->new(
         name           => 'OrderedFakeHash::KeyWith[' . $type_parameter->name . ']',
-        parent         => $KeyWith,
+        parent         => $keyWith,
         type_parameter => $type_parameter,
       );
       return sub {
@@ -107,9 +108,10 @@ sub _setup {
     },
   );
 
-  Moose::Util::TypeConstraints::register_type_constraint($OrderedFakeHash);
-  Moose::Util::TypeConstraints::add_parameterizable_type($OrderedFakeHash);
+  Moose::Util::TypeConstraints::register_type_constraint($orderedFakeHash);
+  Moose::Util::TypeConstraints::add_parameterizable_type($orderedFakeHash);
 
+  return 1;
 }
 
 _setup();
