@@ -8,9 +8,9 @@ BEGIN {
 
 # ABSTRACT: Types for emulating Hash-like behaviours with ArrayRefs.
 
-use Moose::Meta::TypeConstraint::Parameterizable;
 use MooseX::Types;
 use Moose::Util::TypeConstraints ();
+use Moose::Meta::TypeConstraint::Parameterizable;
 
 
 
