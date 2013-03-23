@@ -3,7 +3,7 @@ NAME
     ArrayRefs.
 
 VERSION
-    version 0.1.1
+    version 0.1.2
 
 SYNOPSIS
   Standard Non-MooseX-Types style invocation
