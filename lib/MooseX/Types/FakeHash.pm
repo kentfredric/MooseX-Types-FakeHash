@@ -73,7 +73,7 @@ sub _constraint_generator_OrderedFakeHash {
   my $type_parameter = shift;
   my $subtype        = Moose::Meta::TypeConstraint::Parameterized->new(
     name           => 'OrderedFakeHash::KeyWith[' . $type_parameter->name . ']',
-    parent         => _type_KeyWith,
+    parent         => _type_KeyWith(),
     type_parameter => $type_parameter,
   );
   return sub {
@@ -104,12 +104,9 @@ sub _mk_type {
   return $type;
 }
 
-sub _type_KeyWith  { return _mk_type( name => 'KeyWith', ) }
-sub _type_FakeHash { return _mk_type( name => 'FakeHash', ) }
-
-sub _type_OrderedFakeHash {
-  return _mk_type(  name                 => 'OrderedFakeHash'  );
-}
+sub _type_KeyWith         { return _mk_type( name => 'KeyWith', ) }
+sub _type_FakeHash        { return _mk_type( name => 'FakeHash', ) }
+sub _type_OrderedFakeHash { return _mk_type( name => 'OrderedFakeHash' ) }
 
 sub _setup {
   _type_KeyWith;
