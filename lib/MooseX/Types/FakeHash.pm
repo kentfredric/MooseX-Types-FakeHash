@@ -3,7 +3,10 @@ use warnings;
 
 package MooseX::Types::FakeHash;
 BEGIN {
-  $MooseX::Types::FakeHash::VERSION = '0.1.0';
+  $MooseX::Types::FakeHash::AUTHORITY = 'cpan:KENTNL';
+}
+{
+  $MooseX::Types::FakeHash::VERSION = '0.1.1';
 }
 
 # ABSTRACT: Types for emulating Hash-like behaviours with ArrayRefs.
@@ -125,6 +128,7 @@ no Moose::Util::TypeConstraints;
 1;
 
 __END__
+
 =pod
 
 =head1 NAME
@@ -133,7 +137,7 @@ MooseX::Types::FakeHash - Types for emulating Hash-like behaviours with ArrayRef
 
 =head1 VERSION
 
-version 0.1.0
+version 0.1.1
 
 =head1 SYNOPSIS
 
@@ -282,10 +286,9 @@ Kent Fredric <kentnl@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Kent Fredric <kentnl@cpan.org>.
+This software is copyright (c) 2013 by Kent Fredric <kentnl@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
