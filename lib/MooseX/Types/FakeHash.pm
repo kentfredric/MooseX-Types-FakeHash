@@ -91,7 +91,7 @@ sub _type_FakeHash {
 
 sub _type_OrderedFakeHash {
   my $STR_check = Moose::Util::TypeConstraints::find_type_constraint('Str')->_compiled_type_constraint;
-  my $keywith   = _type_KeyWith;
+  my $keyWith   = _type_KeyWith;
 
   return Moose::Meta::TypeConstraint::Parameterizable->new(
     name       => 'OrderedFakeHash',
