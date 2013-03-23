@@ -1,5 +1,8 @@
 ﻿Release history for MooseX-Types-FakeHash
 
+0.1.2 2013-03-23T18:08:47Z
+ - Minor Code restructuring.
+
 0.1.1 2013-03-23T15:35:10Z
  - Minor Maint release
 

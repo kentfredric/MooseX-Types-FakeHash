@@ -65,7 +65,7 @@
    "provides" : {
       "MooseX::Types::FakeHash" : {
          "file" : "lib/MooseX/Types/FakeHash.pm",
-         "version" : "v0.1.1"
+         "version" : "v0.1.2"
       }
    },
    "release_status" : "stable",
@@ -80,7 +80,7 @@
          "web" : "https://github.com/kentfredric/MooseX-Types-FakeHash"
       }
    },
-   "version" : "0.1.1",
+   "version" : "0.1.2",
    "x_BuiltWith" : {
       "modules" : {
          "Dist::Zilla::PluginBundle::Author::KENTNL" : "1.7.1",

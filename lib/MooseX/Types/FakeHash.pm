@@ -6,7 +6,7 @@ BEGIN {
   $MooseX::Types::FakeHash::AUTHORITY = 'cpan:KENTNL';
 }
 {
-  $MooseX::Types::FakeHash::VERSION = '0.1.1';
+  $MooseX::Types::FakeHash::VERSION = '0.1.2';
 }
 
 # ABSTRACT: Types for emulating Hash-like behaviours with ArrayRefs.
@@ -17,105 +17,106 @@ use Moose::Meta::TypeConstraint::Parameterizable;
 use Moose::Meta::TypeConstraint::Parameterized;
 
 
-
 ## no critic ( RequireArgUnpacking Capitalization )
-
-sub _KeyWith  { return ref( $_[0] ) eq 'ARRAY' && scalar @{ $_[0] } == 2 }
-sub _FakeHash { return ref( $_[0] ) eq 'ARRAY' && !( scalar @{ $_[0] } & 1 ) }
-sub _OrderedFakeHash { return ref( $_[0] ) eq 'ARRAY' }
-
-sub _setup {
-  ## no critic ( ProtectPrivateVars )
-  my $keyWith = Moose::Meta::TypeConstraint::Parameterizable->new(
-    name               => 'KeyWith',
-    package_defined_in => __PACKAGE__,
-    parent             => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
-    constraint         => sub {
-      return unless ref($_) eq 'ARRAY';    # its an array
-      return unless @{$_} == 2;            # and it has exactly 2 keys.
-      return 1;
-    },
-    optimized_constraint => \&MooseX::Types::FakeHash::_KeyWith,
-    constraint_generator => sub {
-      my $type_parameter = shift;
-      my $check          = $type_parameter->_compiled_type_constraint;
-      my $keycheck       = Moose::Util::TypeConstraints::find_type_constraint('Str')->_compiled_type_constraint;
-      return sub {
-        $keycheck->( $_->[0] ) || return;
-        $check->( $_->[1] )    || return;
-        1;
-      };
-    },
-  );
-
-  Moose::Util::TypeConstraints::register_type_constraint($keyWith);
-  Moose::Util::TypeConstraints::add_parameterizable_type($keyWith);
-
-
-  my $fakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
-    name               => 'FakeHash',
-    package_defined_in => __PACKAGE__,
-    parent             => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
-    constraint         => sub {
-      return unless ref($_) eq 'ARRAY';    # its an array
-      return if scalar @{$_} & 1;          # and it has a multiple of 2 keys ( bitwise checks for even, 0 == true )
-      return 1;
-    },
-    optimized_constraint => \&MooseX::Types::FakeHash::_FakeHash,
-    constraint_generator => sub {
-      my $type_parameter = shift;
-      my $check          = $type_parameter->_compiled_type_constraint;
-      my $keycheck       = Moose::Util::TypeConstraints::find_type_constraint('Str')->_compiled_type_constraint;
-      return sub {
-        my @items = @{$_};
-        my $i     = 0;
-        while ( $i <= $#items ) {
-          $keycheck->( $items[$i] ) || return;
-          $check->( $items[ $i + 1 ] ) || return;
-        }
-        continue {
-          $i += 2;
-        }
-
-        1;
-      };
-    },
-  );
-
-  Moose::Util::TypeConstraints::register_type_constraint($fakeHash);
-  Moose::Util::TypeConstraints::add_parameterizable_type($fakeHash);
-
-
-  my $orderedFakeHash = Moose::Meta::TypeConstraint::Parameterizable->new(
-    name               => 'OrderedFakeHash',
-    package_defined_in => __PACKAGE__,
-    parent             => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
-    constraint         => sub {
-      return unless ref($_) eq 'ARRAY';    # its an array
-      return 1;
-    },
-    optimized_constraint => \&MooseX::Types::FakeHash::_OrderedFakeHash,
-    constraint_generator => sub {
-      my $type_parameter = shift;
-      my $subtype        = Moose::Meta::TypeConstraint::Parameterized->new(
-        name           => 'OrderedFakeHash::KeyWith[' . $type_parameter->name . ']',
-        parent         => $keyWith,
-        type_parameter => $type_parameter,
-      );
-      return sub {
-        for my $pair ( @{$_} ) {
-          $subtype->assert_valid($pair) || return;
-        }
-        1;
-      };
-    },
-  );
-
-  Moose::Util::TypeConstraints::register_type_constraint($orderedFakeHash);
-  Moose::Util::TypeConstraints::add_parameterizable_type($orderedFakeHash);
-
+sub _constraint_KeyWith {
+  return unless ref($_) eq 'ARRAY';    # its an array
+  return unless @{$_} == 2;            # and it has exactly 2 keys.
   return 1;
 }
+
+sub _constraint_FakeHash {
+  return unless ref($_) eq 'ARRAY';    # its an array
+  return if scalar @{$_} & 1;          # and it has a multiple of 2 keys ( bitwise checks for even, 0 == true )
+  return 1;
+}
+
+sub _constraint_OrderedFakeHash {
+  return unless ref($_) eq 'ARRAY';    # its an array
+  return 1;
+}
+
+sub _optimised_constraint_KeyWith  { return ref( $_[0] ) eq 'ARRAY' && scalar @{ $_[0] } == 2 }
+sub _optimised_constraint_FakeHash { return ref( $_[0] ) eq 'ARRAY' && !( scalar @{ $_[0] } & 1 ) }
+sub _optimised_constraint_OrderedFakeHash { return ref( $_[0] ) eq 'ARRAY' }
+
+my $STR_check = Moose::Util::TypeConstraints::find_type_constraint('Str')->_compiled_type_constraint;
+
+sub _constraint_generator_KeyWith {
+  my $type_parameter = shift;
+  my $check          = $type_parameter->_compiled_type_constraint;
+  return sub {
+    $STR_check->( $_->[0] ) || return;
+    $check->( $_->[1] )     || return;
+    1;
+  };
+}
+
+sub _constraint_generator_FakeHash {
+  my $type_parameter = shift;
+  my $check          = $type_parameter->_compiled_type_constraint;
+  return sub {
+    my @items = @{$_};
+    my $i     = 0;
+    while ( $i <= $#items ) {
+      $STR_check->( $items[$i] )   || return;
+      $check->( $items[ $i + 1 ] ) || return;
+    }
+    continue {
+      $i += 2;
+    }
+
+    1;
+  };
+}
+
+sub _constraint_generator_OrderedFakeHash {
+  my $type_parameter = shift;
+  my $subtype        = Moose::Meta::TypeConstraint::Parameterized->new(
+    name           => 'OrderedFakeHash::KeyWith[' . $type_parameter->name . ']',
+    parent         => _type_KeyWith(),
+    type_parameter => $type_parameter,
+  );
+  return sub {
+    for my $pair ( @{$_} ) {
+      $subtype->assert_valid($pair) || return;
+    }
+    1;
+  };
+}
+
+my $type_cache = {};
+
+sub _mk_type {
+  my (%args) = @_;
+  my $name = $args{name};
+  return $type_cache->{$name} if exists $type_cache->{$name};
+
+  my $type = $type_cache->{$name} = Moose::Meta::TypeConstraint::Parameterizable->new(
+    package_defined_in   => __PACKAGE__,
+    parent               => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
+    constraint           => __PACKAGE__->can( '_constraint_' . $name ),
+    optimised_constraint => __PACKAGE__->can( '_optimised_constraint_' . $name ),
+    constraint_generator => __PACKAGE__->can( '_constraint_generator_' . $name ),
+    %args,
+  );
+  Moose::Util::TypeConstraints::register_type_constraint($type);
+  Moose::Util::TypeConstraints::add_parameterizable_type($type);
+  return $type;
+}
+
+sub _type_KeyWith         { return _mk_type( name => 'KeyWith', ) }
+sub _type_FakeHash        { return _mk_type( name => 'FakeHash', ) }
+sub _type_OrderedFakeHash { return _mk_type( name => 'OrderedFakeHash' ) }
+
+sub _setup {
+  _type_KeyWith;
+  _type_FakeHash;
+  _type_OrderedFakeHash;
+  return 1;
+}
+
+
+
 
 _setup();
 
@@ -137,7 +138,7 @@ MooseX::Types::FakeHash - Types for emulating Hash-like behaviours with ArrayRef
 
 =head1 VERSION
 
-version 0.1.1
+version 0.1.2
 
 =head1 SYNOPSIS
 
