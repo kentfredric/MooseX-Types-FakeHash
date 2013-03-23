@@ -133,7 +133,7 @@
          {
             "class" : "Dist::Zilla::Plugin::Git::NextVersion",
             "name" : "@Author::KENTNL/Git::NextVersion",
-            "version" : "2.010"
+            "version" : "2.011"
          },
          {
             "class" : "Dist::Zilla::Plugin::MetaConfig",
@@ -175,7 +175,7 @@
          {
             "class" : "Dist::Zilla::Plugin::Git::GatherDir",
             "name" : "@Author::KENTNL/Git::GatherDir",
-            "version" : "2.010"
+            "version" : "2.011"
          },
          {
             "class" : "Dist::Zilla::Plugin::License",
@@ -358,27 +358,27 @@
          {
             "class" : "Dist::Zilla::Plugin::Git::Check",
             "name" : "@Author::KENTNL/Git::Check",
-            "version" : "2.010"
+            "version" : "2.011"
          },
          {
             "class" : "Dist::Zilla::Plugin::Git::Tag",
             "name" : "@Author::KENTNL/Git::Tag/tag_master",
-            "version" : "2.010"
+            "version" : "2.011"
          },
          {
             "class" : "Dist::Zilla::Plugin::Git::Commit",
             "name" : "@Author::KENTNL/Git::Commit",
-            "version" : "2.010"
+            "version" : "2.011"
          },
          {
             "class" : "Dist::Zilla::Plugin::Git::CommitBuild",
             "name" : "@Author::KENTNL/Git::CommitBuild",
-            "version" : "2.010"
+            "version" : "2.011"
          },
          {
             "class" : "Dist::Zilla::Plugin::Git::Tag",
             "name" : "@Author::KENTNL/Git::Tag/tag_release",
-            "version" : "2.010"
+            "version" : "2.011"
          },
          {
             "class" : "Dist::Zilla::Plugin::UploadToCPAN",
