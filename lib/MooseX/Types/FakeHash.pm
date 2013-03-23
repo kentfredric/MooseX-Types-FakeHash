@@ -27,11 +27,13 @@ my $type_cache = {};
 
 sub _mk_type {
   my (%args) = @_;
-  return $type_cache->{ $args{name} } if exists $type_cache->{ $args{name} };
-  my $type = $type_cache->{ $args{name} } = Moose::Meta::TypeConstraint::Parameterizable->new(
+  my $name = $args{name};
+  return $type_cache->{ $name } if exists $type_cache->{ $name };
+
+  my $type = $type_cache->{ $name } = Moose::Meta::TypeConstraint::Parameterizable->new(
     package_defined_in   => __PACKAGE__,
     parent               => Moose::Util::TypeConstraints::find_type_constraint('Ref'),
-    optimised_constraint => __PACKAGE__->can( '_' . $args{name} ),
+    optimised_constraint => __PACKAGE__->can( '_' . $name ),
     %args,
   );
   Moose::Util::TypeConstraints::register_type_constraint($type);
