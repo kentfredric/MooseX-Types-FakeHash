@@ -48,7 +48,7 @@ sub pmver {
     return sprintf('%-45s => %-10s%-15s%s', $module, $pmver, $wanted, "\n");
 }
 
-eval { $v .= pmver('Dist::Zilla::PluginBundle::Author::KENTNL','v1.7.0') };
+eval { $v .= pmver('Dist::Zilla::PluginBundle::Author::KENTNL','v1.7.1') };
 eval { $v .= pmver('Dist::Zilla::PluginBundle::Author::KENTNL::Lite','v1.3.0') };
 eval { $v .= pmver('File::Find','any version') };
 eval { $v .= pmver('File::Temp','any version') };
