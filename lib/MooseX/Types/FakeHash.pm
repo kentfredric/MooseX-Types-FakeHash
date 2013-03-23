@@ -95,7 +95,7 @@ sub _type_OrderedFakeHash {
   my $STR_check = Moose::Util::TypeConstraints::find_type_constraint('Str')->_compiled_type_constraint;
   my $keyWith   = _type_KeyWith;
 
-  return Moose::Meta::TypeConstraint::Parameterizable->new(
+  return _mk_type(
     name       => 'OrderedFakeHash',
     constraint => sub {
       return unless ref($_) eq 'ARRAY';    # its an array
